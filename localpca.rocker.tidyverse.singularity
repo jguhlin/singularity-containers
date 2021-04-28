@@ -1,0 +1,18 @@
+Bootstrap: docker
+From: rocker/tidyverse:4.0.5
+
+%labels
+
+    MAINTAINER "Joseph Guhlin"
+    VERSION "lostruct Apr 2021"
+
+%environment
+    _R_SHLIB_STRIP_=true
+
+%post
+    R -e 'install.packages("data.table", repos="https://cran.stat.auckland.ac.nz/")'
+    R -e 'devtools::install_github("petrelharp/local_pca/lostruct")'
+    R -e 'library(lostruct)'
+
+%runscript
+    exec R "$@"
