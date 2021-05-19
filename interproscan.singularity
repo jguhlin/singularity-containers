@@ -1,0 +1,29 @@
+Bootstrap: docker
+From: debian:bullseye-slim
+
+%labels
+
+    MAINTAINER "Joseph Guhlin"
+    VERSION "Interproscan 19 May 2021"
+
+%post
+    export LANG=C.UTF-8
+    export LC_ALL=C.UTF-8
+    mkdir -p /usr/share/man/man1
+    apt update
+    apt upgrade -y
+    apt install wget tzdata libterm-readline-perl-perl python3 locales axel -y
+    apt install openjdk-11-jre -y
+    cd /opt
+    axel -n 8 ftp://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/5.51-85.0/interproscan-5.51-85.0-64-bit.tar.gz
+    wget ftp://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/5.51-85.0/interproscan-5.51-85.0-64-bit.tar.gz.md5
+    md5sum -c interproscan-5.51-85.0-64-bit.tar.gz.md5
+    
+    tar xf interproscan-5.51-85.0-*-bit.tar.gz
+    rm *gz
+    cd interproscan-5.51-85.0
+    python3 initial_setup.py
+
+%runscript
+    cd /opt/interproscan-5.51-85.0
+    exec ./interproscan.sh "$@"
