@@ -1,0 +1,24 @@
+Bootstrap: docker
+From: debian:bookworm
+
+%labels
+
+    MAINTAINER "Joseph Guhlin"
+    VERSION "Augustus 3.4.0 CGP MySQL SQLITE March 2022"
+
+%post
+    export LANG=C.UTF-8
+    export LC_ALL=C.UTF-8
+    apt-get update
+    apt-get install -y libboost-all-dev build-essential liblpsolve55-dev libgsl27 apt-utils
+    apt-get install -y default-mysql-server default-mysql-client sqlite3 libsqlite3-dev wget libmysql++-dev libgsl-dev libhts-dev bamtools libbamtools-dev
+
+    cd /
+    wget https://github.com/Gaius-Augustus/Augustus/releases/download/v3.4.0/augustus-3.4.0.tar.gz
+    tar zxf augustus-3.4.0.tar.gz
+    cd augustus-3.4.0
+    make -j 64
+
+%runscript
+    cd /augustus-3.4.0/bin
+    exec ./augustus "$@"
